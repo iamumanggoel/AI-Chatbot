@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
+from langchain_logic import get_bot_response
 
 
 
@@ -29,13 +30,13 @@ def handle_disconnect():
 
 @socketio.on('user_message')
 def handle_user_message(data):
-    user_text = data.get('text', "")
-    print("User message:", user_text)
-
-    # Send the message with history to LLM
-
-    bot_reply = f"You said: {user_text}"
-    emit('bot_message', {'text': bot_reply})
+    user_message = data['text']
+    print(f"User message: {user_message}")
+    
+    bot_response = get_bot_response(user_message)
+    print(f"Bot response: {bot_response}")
+    
+    emit('bot_message', {'text': bot_response})
     
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
