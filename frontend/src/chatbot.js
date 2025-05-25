@@ -23,7 +23,7 @@ class ChatbotWidget {
 
     let html;
     try {
-      const res = await fetch('src/chatbot.html');
+      const res = await fetch('/chatbot.html');
       html = await res.text();
     } catch (err) {
       return console.error('Failed to load chatbot.html', err);
