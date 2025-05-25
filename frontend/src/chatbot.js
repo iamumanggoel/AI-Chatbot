@@ -18,7 +18,7 @@ class ChatbotWidget {
 
     this.btn = document.createElement('div');
     this.btn.className = 'chatbot-button';
-    this.btn.innerHTML = '<span class="material-icons">chat</span>'; 
+    this.btn.innerHTML = '<span class="material-icons">chat</span>';
     container.appendChild(this.btn);
 
     let html;
@@ -28,6 +28,7 @@ class ChatbotWidget {
     } catch (err) {
       return console.error('Failed to load chatbot.html', err);
     }
+
     container.insertAdjacentHTML('beforeend', html);
 
     this.win = container.querySelector('.chatbot-window');
@@ -40,7 +41,6 @@ class ChatbotWidget {
     this.win.style.display = 'none';
 
     this.btn.addEventListener('click', () => {
-
       if (!this.isOpen) {
         this.btn.classList.add('rotate-out');
         this.btn.classList.remove('rotate-in');
@@ -48,8 +48,6 @@ class ChatbotWidget {
         this.btn.classList.add('rotate-in');
         this.btn.classList.remove('rotate-out');
       }
-
-     
 
       this.isOpen = !this.isOpen;
       this.win.style.display = this.isOpen ? 'flex' : 'none';
@@ -61,20 +59,19 @@ class ChatbotWidget {
         : '<span class="material-icons">chat</span>';
     });
 
-
-
     this.send.addEventListener('click', () => this.sendMsg());
     this.input.addEventListener('keypress', e => e.key === 'Enter' && this.sendMsg());
 
     this.socket = io(BACKEND_SOCKET_URL);
     this.socket.on('connect', () => console.log('Socket connected'));
-    this.socket.on('bot_message', d => this.append('bot', d.text));
+    this.socket.on('bot_message', d => this.handleBotMessage(d));
   }
 
   sendMsg() {
     const t = this.input.value.trim();
     if (!t) return;
     this.append('user', t);
+    this.appendLoading();
     this.socket.emit('user_message', { text: t });
     this.input.value = '';
   }
@@ -85,5 +82,22 @@ class ChatbotWidget {
     el.textContent = text;
     this.msgs.appendChild(el);
     this.msgs.scrollTop = this.msgs.scrollHeight;
+  }
+
+  appendLoading() {
+    const el = document.createElement('div');
+    el.className = 'chatbot-msg bot bot-typing';
+    el.innerHTML = `
+      <span class="loading-dots">
+        <span></span><span></span><span></span>
+      </span>`;
+    this.msgs.appendChild(el);
+    this.msgs.scrollTop = this.msgs.scrollHeight;
+  }
+
+  handleBotMessage(data) {
+    const loadingEl = this.msgs.querySelector('.chatbot-msg.bot-typing');
+    if (loadingEl) loadingEl.remove();
+    this.append('bot', data.text);
   }
 }
