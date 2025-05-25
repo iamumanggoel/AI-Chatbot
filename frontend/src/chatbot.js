@@ -1,76 +1,74 @@
-import { BACKEND_SOCKET_URL } from "./config.js";
+import { setTheme } from './theme.js';
+import { BACKEND_SOCKET_URL } from './config.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
+  setTheme('auto');
   new ChatbotWidget();
 });
 
 class ChatbotWidget {
   constructor() {
-    this.OnInit();
+    this.isOpen = false;
+    this.init();
   }
 
-  async OnInit() {
-    const containerDiv = document.getElementById("chatbot-container");
-    if (!containerDiv) {
-      console.error("Chatbot container not found!");
-      return;
+  async init() {
+    const container = document.getElementById('chatbot-container');
+    if (!container) return console.error('No #chatbot-container found');
+
+    this.btn = document.createElement('div');
+    this.btn.className = 'chatbot-button';
+    this.btn.innerText = '🐵';
+    container.appendChild(this.btn);
+
+    let html;
+    try {
+      const res = await fetch('src/chatbot.html');
+      html = await res.text();
+    } catch (err) {
+      return console.error('Failed to load chatbot.html', err);
     }
+    container.insertAdjacentHTML('beforeend', html);
 
-    const chatButton = document.createElement("div");
-    chatButton.classList.add("chatbot-button");
-    chatButton.innerHTML = "💬";
-    containerDiv.appendChild(chatButton);
+    this.win = container.querySelector('.chatbot-window');
+    this.msgs = container.querySelector('#chatbot-messages');
+    this.input = container.querySelector('#chatbot-input');
+    this.send = container.querySelector('#chatbot-send');
+    if (!this.win || !this.msgs || !this.input || !this.send) {
+      return console.error('Chatbot UI elements missing');
+    }
+    this.win.style.display = 'none';
 
-    const html = await this.loadHtml("./src/chatbot.html");
-    containerDiv.insertAdjacentHTML("beforeend", html);
+    this.btn.addEventListener('click', () => {
+      this.btn.classList.add('rotate');
+      setTimeout(() => this.btn.classList.remove('rotate'), 600);
 
-    this.chatWindow = containerDiv.querySelector(".chatbot-window");
-    this.messagesDiv = containerDiv.querySelector("#chatbot-messages");
-    this.inputField = containerDiv.querySelector("#chatbot-input");
-    this.sendButton = containerDiv.querySelector("#chatbot-send");
-
-    this.chatWindow.style.display = "none";
-
-    chatButton.addEventListener("click", () => {
-      this.chatWindow.style.display =
-        this.chatWindow.style.display === "none" ? "flex" : "none";
+      this.isOpen = !this.isOpen;
+      this.win.style.display = this.isOpen ? 'flex' : 'none';
+      this.btn.classList.toggle('open', this.isOpen);
+      this.btn.innerText = this.isOpen ? '❌' : '🐵';
     });
+    this.send.addEventListener('click', () => this.sendMsg());
+    this.input.addEventListener('keypress', e => e.key === 'Enter' && this.sendMsg());
 
-    this.sendButton.addEventListener("click", () => this.sendMessage());
-
-    this.connectSocket();
-  }
-
-  async loadHtml(url) {
-    const res = await fetch(url);
-    return await res.text();
-  }
-
-  connectSocket() {
     this.socket = io(BACKEND_SOCKET_URL);
-    this.socket.on("connect", () => {
-      console.log("Connected to server");
-    });
-
-    this.socket.on("bot_message", (data) => {
-      this.appendMessage("bot", data.text);
-    });
+    this.socket.on('connect', () => console.log('Socket connected'));
+    this.socket.on('bot_message', d => this.append('bot', d.text));
   }
 
-  sendMessage() {
-    const msg = this.inputField.value.trim();
-    if (msg) {
-      this.appendMessage("user", msg);
-      this.socket.emit("user_message", { text: msg });
-      this.inputField.value = "";
-    }
+  sendMsg() {
+    const t = this.input.value.trim();
+    if (!t) return;
+    this.append('user', t);
+    this.socket.emit('user_message', { text: t });
+    this.input.value = '';
   }
 
-  appendMessage(sender, text) {
-    const msgEl = document.createElement("div");
-    msgEl.classList.add("chatbot-msg", sender);
-    msgEl.textContent = text;
-    this.messagesDiv.appendChild(msgEl);
-    this.messagesDiv.scrollTop = this.messagesDiv.scrollHeight;
+  append(sender, text) {
+    const el = document.createElement('div');
+    el.className = `chatbot-msg ${sender}`;
+    el.textContent = text;
+    this.msgs.appendChild(el);
+    this.msgs.scrollTop = this.msgs.scrollHeight;
   }
 }
