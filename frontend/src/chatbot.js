@@ -18,7 +18,7 @@ class ChatbotWidget {
 
     this.btn = document.createElement('div');
     this.btn.className = 'chatbot-button';
-    this.btn.innerText = '🐵';
+    this.btn.innerHTML = '<span class="material-icons">chat</span>'; 
     container.appendChild(this.btn);
 
     let html;
@@ -40,14 +40,29 @@ class ChatbotWidget {
     this.win.style.display = 'none';
 
     this.btn.addEventListener('click', () => {
-      this.btn.classList.add('rotate');
-      setTimeout(() => this.btn.classList.remove('rotate'), 600);
+
+      if (!this.isOpen) {
+        this.btn.classList.add('rotate-out');
+        this.btn.classList.remove('rotate-in');
+      } else {
+        this.btn.classList.add('rotate-in');
+        this.btn.classList.remove('rotate-out');
+      }
+
+     
 
       this.isOpen = !this.isOpen;
       this.win.style.display = this.isOpen ? 'flex' : 'none';
       this.btn.classList.toggle('open', this.isOpen);
-      this.btn.innerText = this.isOpen ? '❌' : '🐵';
+      this.win.classList.toggle('open', this.isOpen);
+
+      this.btn.innerHTML = this.isOpen
+        ? '<span class="material-icons">close</span>'
+        : '<span class="material-icons">chat</span>';
     });
+
+
+
     this.send.addEventListener('click', () => this.sendMsg());
     this.input.addEventListener('keypress', e => e.key === 'Enter' && this.sendMsg());
 
