@@ -70,7 +70,7 @@ class ChatbotWidget {
   sendMsg() {
     const t = this.input.value.trim();
     if (!t) return;
-    this.append('user', t);
+    this.append('user', t); 
     this.appendLoading();
     this.socket.emit('user_message', { text: t });
     this.input.value = '';
@@ -79,7 +79,11 @@ class ChatbotWidget {
   append(sender, text) {
     const el = document.createElement('div');
     el.className = `chatbot-msg ${sender}`;
-    el.textContent = text;
+    if (sender === 'bot') {
+      el.innerHTML = this.linkify(text);
+    } else {
+      el.textContent = text;
+    }
     this.msgs.appendChild(el);
     this.msgs.scrollTop = this.msgs.scrollHeight;
   }
@@ -100,4 +104,19 @@ class ChatbotWidget {
     if (loadingEl) loadingEl.remove();
     this.append('bot', data.text);
   }
+
+linkify(text) {
+  const urlRegex = /(\bhttps?:\/\/[^\s]+)/gi;
+  const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+
+  return text
+    .replace(urlRegex, (url) => {
+      const cleanUrl = url.replace(/\.$/, ''); 
+      return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer">${cleanUrl}</a>`;
+    })
+    .replace(emailRegex, (email) => {
+      return `<a href="mailto:${email}">${email}</a>`;
+    });
+}
+
 }

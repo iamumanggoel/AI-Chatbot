@@ -137,6 +137,13 @@ html[data-theme="dark"] {
     font-weight: 400;
 }
 
+.chatbot-msg a {
+  color: #1a73e8;
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+
 .chatbot-msg.bot {
     align-self: flex-start;
     background: var(--md-sys-color-outline);
@@ -156,6 +163,7 @@ html[data-theme="dark"] {
     gap: 5px;
     margin-top: 6px;
     white-space: nowrap;
+    padding: 5px 8px;
 }
 
 .loading-dots span {
