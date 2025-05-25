@@ -1,25 +1,27 @@
 :root {
-    --md-sys-color-primary: #075e54;
+    --md-sys-color-primary: #005cbb;
     --md-sys-color-on-primary: #ffffff;
     --md-sys-color-surface: #ffffff;
     --md-sys-color-on-surface: #000000;
-    --md-sys-color-secondary: #25d366;
+    --md-sys-color-secondary: #005cbb;
     --md-sys-color-on-secondary: #ffffff;
     --md-sys-color-outline: #e4e4e4;
     --md-sys-color-background: #e5ddd5;
     --chatbot-border-radius: 20px;
     --chatbot-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --transparent-background: transparent;
 }
 
 html[data-theme="dark"] {
-    --md-sys-color-primary: #1b5e20;
-    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary: #abc7ff;
+    --md-sys-color-on-primary: #002f65;
     --md-sys-color-surface: #121212;
     --md-sys-color-on-surface: #e0e0e0;
-    --md-sys-color-secondary: #25d366;
+    --md-sys-color-secondary: #abc7ff;
     --md-sys-color-on-secondary: #ffffff;
     --md-sys-color-outline: #444444;
     --md-sys-color-background: #333333;
+    --transparent-background: transparent;
 }
 
 * {
@@ -39,6 +41,10 @@ html[data-theme="dark"] {
 
 *::-webkit-scrollbar-thumb:hover {
     background-color: #6b7280;
+}
+
+html, body{
+    background: var(--transparent-background);
 }
 
 .chatbot-button {
@@ -91,7 +97,6 @@ html[data-theme="dark"] {
     background: var(--md-sys-color-surface);
     color: var(--md-sys-color-on-surface);
     border-radius: var(--chatbot-border-radius);
-    border: 1px solid var(--md-sys-color-surface);
     display: none;
     flex-direction: column;
     box-shadow: var(--chatbot-shadow);
