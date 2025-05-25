@@ -11,7 +11,7 @@ load_dotenv()
 #Builds the flask app
 app = Flask(__name__)
 
-socketio = SocketIO(app, cors_allowed_origins="*") 
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet') 
 
 @app.route('/', methods=['GET'])
 def index():
@@ -38,5 +38,8 @@ def handle_user_message(data):
     
     emit('bot_message', {'text': bot_response})
     
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port)
+
