@@ -5,6 +5,8 @@ export default defineConfig({
     outDir: 'dist', 
     rollupOptions: {
       input: 'index.html',
+       entryFileNames: 'chatbot-widget.js',   
+       assetFileNames: 'chatbot-style.css', 
     },
   },
 })

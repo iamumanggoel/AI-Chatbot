@@ -12,7 +12,7 @@ class ChatbotWidget {
     this.init();
   }
 
-  async init() {
+  init() {
     const container = document.getElementById('chatbot-container');
     if (!container) return console.error('No #chatbot-container found');
 
@@ -22,12 +22,25 @@ class ChatbotWidget {
     container.appendChild(this.btn);
 
     let html;
-    try {
-      const res = await fetch('/chatbot.html');
-      html = await res.text();
-    } catch (err) {
-      return console.error('Failed to load chatbot.html', err);
-    }
+    // try {
+    //   const res = await fetch('/chatbot.html');
+    //   html = await res.text();
+    // } catch (err) {
+    //   return console.error('Failed to load chatbot.html', err);
+    // }
+
+    html = `
+      <div class="chatbot-window">
+        <div class="chatbot-header">Ask Me Anything</div>
+        <div class="chatbot-messages" id="chatbot-messages"></div>
+        <div class="chatbot-input">
+          <input type="text" id="chatbot-input" placeholder="Type a message..." />
+          <button id="chatbot-send">
+              <span class="material-icons">send</span>
+          </button>
+        </div>
+      </div>
+    `
 
     container.insertAdjacentHTML('beforeend', html);
 
