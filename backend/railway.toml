@@ -1,0 +1,7 @@
+[build]
+  # Set the command to install dependencies without using a virtual environment
+  buildCommand = "pip install --no-cache-dir -r requirements.txt"
+
+[deploy]
+  # Set the command to start your Flask app (make sure the path to app.py is correct)
+  startCommand = "python app.py"
