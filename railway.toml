@@ -8,8 +8,3 @@
 [deploy]
   # Command to start your Flask app without using a virtual environment
   deployCommand = "python app.py"
-
-[env]
-  # Example of environment variables you may want to add
-  # Example: "FLASK_ENV = production"
-  # "KEY" = "value"
