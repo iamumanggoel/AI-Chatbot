@@ -7,4 +7,4 @@
 
 [deploy]
   # Command to start your Flask app without using a virtual environment
-  deployCommand = "python app.py"
+  startCommand = "python app.py"
